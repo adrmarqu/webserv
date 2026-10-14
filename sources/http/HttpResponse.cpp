@@ -193,7 +193,6 @@ void	HttpResponse::searchGETendPoint(std::string &file)
 int	HttpResponse::checkFile(std::string const &file)
 {
 	struct stat	sb;
-	int			ret;
 
 	if (stat(file.c_str(), &sb) == -1)
 	{
@@ -221,7 +220,6 @@ int	HttpResponse::checkFile(std::string const &file)
 				return (0);
 		}*/
 	}
-	ret = 0;
 	std::cout << "st_mode & S_IXUSR " << sb.st_mode << " & " << S_IXUSR
 		<< " = " << (sb.st_mode & S_IXUSR) << std::endl;
 	if (S_ISREG(sb.st_mode))

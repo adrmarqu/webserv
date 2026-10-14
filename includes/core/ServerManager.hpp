@@ -15,7 +15,7 @@
 
 #include <vector>
 #include <map>
-#include <sys/epoll.h>
+#include "EpollCompat.hpp"
 #include <csignal>
 #include "Server.hpp"
 #include "../ServerConfig.hpp"

@@ -19,7 +19,7 @@ std::map< int, std::string >	createErrorCodes(void)
     map[101] = "Switching Protocols";
     map[102] = "Processing";
     map[103] = "Early Hints";
-    map[200] = "SuckSexs";
+    map[200] = "OK";
     map[201] = "Created";
     map[202] = "Accepted";
     map[203] = "Non-Authoritative Information";

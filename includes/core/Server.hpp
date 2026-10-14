@@ -21,7 +21,6 @@
 # include <sys/types.h>
 # include <vector>
 # include "../ListenSocket.hpp"
-# include <sys/epoll.h>
 # include <map>
 # include <cstddef>
 # include <cstdlib>

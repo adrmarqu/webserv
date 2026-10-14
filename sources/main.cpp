@@ -29,13 +29,16 @@ void signalHandler(int signum) {
 
 int main(int ac, char **av)
 {
-	if (ac != 2) {
-		std::cerr << "Error: ./webserv [Configuration file]" << std::endl;
+	std::string configFile = "files/default.conf";
+	if (ac == 2)
+		configFile = av[1];
+	else if (ac > 2) {
+		std::cerr << "Usage: ./webserv [configuration_file.conf]" << std::endl;
 		return 1;
 	}
 
 	try {
-		ParserConfig parser(av[1]);
+		ParserConfig parser(configFile);
 		const std::vector<ServerConfig>& configs = parser.getServers();
 		
 		if (configs.empty()) {

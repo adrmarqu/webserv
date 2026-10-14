@@ -29,29 +29,45 @@ void	ServerConfig::sentError(std::string msg) const
 
 std::string	ServerConfig::lookForHost(std::string const &hostname)
 {
+	if (hostname == "localhost")
+		return ("127.0.0.1");
+
 	int	fd = open("/etc/hosts", O_RDONLY);
 	if (fd < 0)
-		sentError("Error to open /etc/hosts");
+		return ("");
 
 	char		buffer[4096];
 	ssize_t		bytesRead;
-	std::string	line;
+	std::string	content;
 
 	while ((bytesRead = read(fd, buffer, sizeof(buffer))) > 0)
+		content.append(buffer, bytesRead);
+	close(fd);
+
+	std::istringstream	iss(content);
+	std::string			line;
+
+	while (std::getline(iss, line))
 	{
-		for (ssize_t i = 0; i < bytesRead; i++)
+		size_t	start = 0;
+		while (start < line.length() && std::isspace(line[start]))
+			start++;
+		if (start >= line.length() || line[start] == '#')
+			continue ;
+
+		std::istringstream	lineStream(line.substr(start));
+		std::string			ipToken;
+		if (!(lineStream >> ipToken))
+			continue ;
+
+		std::string	hostToken;
+		while (lineStream >> hostToken)
 		{
-			if (buffer[i] == '\n')
-			{	
-				if (line.find(hostname) != std::string::npos)
-					return close(fd), line;
-				line.clear();
-			}
-			else
-				line += buffer[i];
+			if (hostToken == hostname)
+				return (ipToken);
 		}
 	}
-	return close(fd), line;
+	return ("");
 }
 
 // Converts a unsigned int ip to std::string (0.0.0.0) ip
@@ -157,15 +173,7 @@ void	ServerConfig::setListen(VectorStr const &data)
 	std::string	ip = lookForHost(host);
 
 	if (!ip.empty())
-	{
-		host.clear();
-		for (unsigned int i = 0; i < ip.length(); i++)
-		{
-			if (std::isspace(ip[i]))
-				break ;
-			host += ip[i];
-		}
-	}
+		host = ip;
 	this->ip = getInet(host);
 	this->ipStr = host;
 	this->port = getPortNum(port);
