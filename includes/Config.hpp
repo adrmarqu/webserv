@@ -1,29 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ConfigFile.hpp                                     :+:      :+:    :+:   */
+/*   Config.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adrmarqu <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: avolcy <avolcy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/24 16:55:38 by adrmarqu          #+#    #+#             */
-/*   Updated: 2025/09/24 16:58:37 by adrmarqu         ###   ########.fr       */
+/*   Created: 2025/04/17 17:45:33 by avolcy            #+#    #+#             */
+/*   Updated: 2025/04/25 13:50:34 by adrmarqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONFIGFILE_HPP
-# define CONFIGFILE_HPP
+#ifndef CONFIG_HPP
+# define CONFIG_HPP
 
-class ConfigFile
+struct ServerConfi
 {
-	public:
 	
-		ConfigFile(std::string const &file);
-		~ConfigFile();
-
-	private:
-
-		
-
+	int ip;
+	int port;
+	int backlog;
 };
 
 #endif

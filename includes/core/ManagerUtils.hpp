@@ -1,28 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ServerManager.hpp                                  :+:      :+:    :+:   */
+/*   ManagerUtils.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adrmarqu <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: avolcy <avolcy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/24 16:58:46 by adrmarqu          #+#    #+#             */
-/*   Updated: 2025/09/24 16:59:39 by adrmarqu         ###   ########.fr       */
+/*   Created: 2025/06/08 14:46:19 by avolcy            #+#    #+#             */
+/*   Updated: 2025/06/08 14:51:53 by avolcy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVERMANAGER_HPP
-# define SERVERMANAGER_HPP
+#ifndef MANAGER_UTILS
+# define MANAGER_UTILS
 
-class ServerManager
+#include <iostream>
+
+namespace ManUtils
 {
-	public:
+    bool readClientData(int client_fd, std::string& clientBuffer);
+}
 
-		ServerManager();
-		~ServerManager();
-
-	private:
-
-
-};
-
-#endif
+#endif 

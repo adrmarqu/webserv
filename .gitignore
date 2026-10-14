@@ -1,7 +1,11 @@
 .
 ..
-*.a
+*.exe
 *.d
 *.o
-*.swp
 *.txt
+*.swp
+*.swo
+*.out
+*test*
+webserv
