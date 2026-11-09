@@ -1,85 +1,38 @@
-# Webserv
+# Webserv - 42 Barcelona HTTP/1.1 Web Server
 
-A high-performance, non-blocking HTTP/1.1 web server implemented in C++98.
+Webserv is an advanced systems and network programming project from the 42 Barcelona curriculum. The goal is to build a high-performance, fully non-blocking HTTP/1.1 web server in C++98 modeled after NGINX. The server implements an event-driven I/O multiplexing architecture using Linux epoll with cross-platform POSIX poll fallback for macOS. It handles concurrent client connections, parses RFC-compliant HTTP/1.1 requests, serves static content, generates dynamic directory listings (autoindex), processes file uploads with configurable client_max_body_size limits, executes dynamic scripts via Common Gateway Interface (CGI), and manages virtual hosts and routing rules defined in an NGINX-inspired configuration file.
 
----
+# Prerequisites
 
-## Features
+To build and run Webserv, ensure you have:
 
-- Non-blocking I/O multiplexing (native Linux `epoll` and cross-platform POSIX `poll` fallback for macOS).
-- Full HTTP/1.1 request parsing and response generation.
-- HTTP methods supported: `GET`, `POST`, and `DELETE`.
-- Static file serving (HTML, CSS, images, text).
-- Directory listing (`autoindex`).
-- Custom HTTP error pages (e.g. 400, 403, 404, 405, 500).
-- HTTP Redirections (e.g. 301 Moved Permanently).
-- File upload handling with configurable `client_max_body_size`.
-- Common Gateway Interface (CGI) execution for dynamic scripts (Python, etc.).
-- Multi-server support: listen on multiple ports and hostnames from a single configuration file.
+- A C++ compiler supporting the C++98 standard: clang++ or g++
+- GNU Make
+- Python 3 (optional, for executing Python CGI scripts)
+- Supported Operating System: macOS or Linux (Ubuntu, Debian, Fedora, Arch)
 
----
-
-## Prerequisites
-
-To build and run this project, ensure you have the following installed:
-
-- **Operating System:** macOS or Linux (Ubuntu, Debian, Fedora, Arch, etc.)
-- **C++ Compiler:** `clang++` or `g++` supporting `-std=c++98`
-- **Build Tool:** GNU `make`
-- **CGI Runtime (Optional):** `python3` (for running Python CGI scripts)
-
-### Installation on Ubuntu / Debian:
+### Ubuntu / Debian Package Installation
 
 ```bash
 sudo apt update
 sudo apt install build-essential clang python3
 ```
 
-### Installation on macOS:
+### macOS Package Installation
 
 ```bash
 xcode-select --install
 ```
 
----
+# Configuration
 
-## Compilation
-
-Build the project using the Makefile:
-
+1. Clone the repository:
 ```bash
-make
+git clone https://github.com/adrmarqu/webserv.git
+cd webserv
 ```
 
-Available Makefile targets:
-
-- `make`: Compiles the server binary (`webserv`).
-- `make clean`: Removes all compiled object (`.o`) and dependency (`.d`) files.
-- `make fclean`: Removes object files, dependencies, and the `webserv` binary.
-- `make re`: Performs a complete rebuild (`fclean` + `all`).
-
----
-
-## Usage
-
-Run the executable with a configuration file:
-
-```bash
-./webserv [path_to_config.conf]
-```
-
-If no configuration file is provided, `webserv` automatically loads `files/default.conf`:
-
-```bash
-./webserv
-```
-
-To stop the server safely, press `Ctrl + C` (sends `SIGINT`).
-
----
-
-## Configuration File Guide
-
+2. Configuration File (files/default.conf):
 Configuration files use an NGINX-inspired block syntax:
 
 ```nginx
@@ -117,55 +70,120 @@ server {
 
 ### Directives Reference
 
-- `listen [ip]:[port]`: Defines the IP address and port to bind and listen on.
-- `server_name [names...]`: Defines virtual host domain names for this server block.
-- `root [path]`: Sets the base directory for resolving file requests.
-- `index [files...]`: Sets default index files to serve when a directory is requested.
-- `error_page [code] [path]`: Configures custom HTML pages for specific HTTP status codes.
-- `client_max_body_size [size]`: Limits the maximum acceptable client request body size (e.g. `10M`, `100M`).
-- `location [path] { ... }`: Configures routing rules for specific URI prefixes:
-  - `methods [GET] [POST] [DELETE]`: Whitelist of accepted HTTP methods for the route.
-  - `autoindex on | off`: Enables or disables directory listings when no index file is found.
-  - `return [code] [url/path]`: Configures an immediate HTTP redirect or response.
-  - `cgi_extension [ext]`: Supported file extensions for CGI processing (e.g. `.py`).
-  - `cgi_path [path]`: Absolute path to the CGI script interpreter (e.g. `/usr/bin/python3`).
-  - `cgi_enable on | off`: Enables or disables CGI execution for this route.
+- listen [ip]:[port]: Defines the IP address and port to bind and listen on.
+- server_name [names...]: Defines virtual host domain names for the server block.
+- root [path]: Sets the base filesystem directory for resolving file requests.
+- index [files...]: Sets default fallback files when a directory is requested.
+- error_page [code] [path]: Configures custom HTML pages for specific HTTP status codes.
+- client_max_body_size [size]: Restricts the maximum allowable client request body size (e.g. 10M).
+- location [path] { ... }: Defines specific routing rules for matching URI prefixes:
+  - methods [GET] [POST] [DELETE]: Whitelist of accepted HTTP methods for the route.
+  - autoindex on | off: Enables or disables automated directory listing when no index file exists.
+  - return [code] [url/path]: Configures an immediate HTTP redirect or response.
+  - cgi_extension [ext]: Supported file extensions for CGI processing (e.g. .py).
+  - cgi_path [path]: Absolute path to the CGI script interpreter (e.g. /usr/bin/python3).
+  - cgi_enable on | off: Enables or disables CGI script execution for this route.
 
----
+# Execution
 
-## Testing
+### Compilation
 
-Once the server is running on port 8080:
-
-### 1. Web Browser
-Navigate to:
+Compile the executable using Make:
+```bash
+make
 ```
+
+### Running the Server
+
+Launch Webserv with the default configuration (files/default.conf):
+```bash
+./webserv
+```
+
+Or pass a custom configuration file as an argument:
+```bash
+./webserv files/default.conf
+```
+
+To stop the server cleanly, press Ctrl + C (triggers SIGINT handler and closes all listening and active sockets).
+
+# Testing and Verification
+
+Once the server is running on port 8080, perform verification tests:
+
+### 1. Browser Navigation
+
+Open your web browser and navigate to:
 http://localhost:8080/
-```
 
-### 2. cURL Commands
+### 2. cURL Verification Commands
 
-- **Static GET Request:**
+- Static GET Request:
   ```bash
   curl -i http://127.0.0.1:8080/
   ```
 
-- **404 Error Page:**
+- Custom 404 Error Page:
   ```bash
   curl -i http://127.0.0.1:8080/nonexistent.html
   ```
 
-- **CGI Script Execution:**
+- CGI Script Execution:
   ```bash
   curl -i http://127.0.0.1:8080/cgi-bin/hello.py
   ```
 
-- **POST Request:**
+- POST Request with Form Data:
   ```bash
   curl -i -X POST -d "param1=value1&param2=value2" http://127.0.0.1:8080/
   ```
 
-- **DELETE Request:**
+- DELETE Request:
   ```bash
-  curl -i -X DELETE http://127.0.0.1:8080/delete-me/target.txt
+  curl -i -X DELETE http://127.0.0.1:8080/files/test.txt
   ```
+
+# Project Structure
+
+```
+webserv/
+├── Makefile                 # C++98 build automation
+├── files/                   # Server configuration files (.conf)
+│   └── default.conf         # Standard multi-host server configuration
+├── html/                    # Default web root directory
+│   ├── index.html           # Landing page
+│   ├── error/               # Custom HTTP error pages (400, 403, 404, 500)
+│   └── cgi-bin/             # Dynamic CGI scripts (Python, etc.)
+├── includes/                # Header files (.hpp)
+│   ├── Server.hpp           # Core server cluster and event loop
+│   ├── Socket.hpp           # Socket creation, non-blocking fcntl, and binding
+│   ├── Epoll.hpp            # Linux epoll multiplexing wrapper
+│   ├── Poll.hpp             # macOS POSIX poll multiplexing wrapper
+│   ├── Config.hpp           # Configuration file parser and tokenizer
+│   ├── Location.hpp         # Route-specific directive definitions
+│   ├── HttpRequest.hpp      # HTTP/1.1 request parser and header extractor
+│   ├── HttpResponse.hpp     # HTTP response generator and status codes
+│   ├── CGI.hpp              # Common Gateway Interface process handler
+│   └── Client.hpp           # Per-client state buffer and I/O tracking
+└── sources/                 # C++ implementation files (.cpp)
+```
+
+# Commands and Makefile Targets
+
+- make or make all: Compiles the source files with -Wall -Wextra -Werror -std=c++98 and produces the webserv binary
+- make clean: Removes compiled object files (.o) and dependency files (.d)
+- make fclean: Removes object files, dependencies, and the webserv binary
+- make re: Completely rebuilds the server executable from scratch
+
+# Technical Highlights
+
+- Non-Blocking Architecture: Operates on a single-threaded event loop using non-blocking file descriptors (fcntl O_NONBLOCK) with epoll (Linux) or poll (macOS), ensuring uninterrupted service even with heavy concurrent traffic.
+- Full HTTP/1.1 Compliance: Supports keep-alive connections, chunked transfer encoding, accurate status responses, and MIME type resolution.
+- Dynamic CGI Execution: Executes CGI scripts in child processes via fork and execve, communicating over bidirectional pipes with timeout guards against infinite loops.
+
+# Author Details
+
+Author: Adrià Márquez Nebot
+Github: https://github.com/adrmarqu
+LinkedIn: https://www.linkedin.com/in/adria-marquez
+Portfolio: https://adrmarqu.github.io
